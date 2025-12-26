@@ -55,21 +55,51 @@ The **Dashboard** is your central hub:
    - Type the task title in the input field and press Enter.
 4. **Moving Tasks**:
    - Use the **arrow buttons (← / →)** on a task card to move it between columns.
+5. **Changing Task Level (Project → Module → User Story)**:
+   - Each task has a level indicator (Project/Module/User Story) shown on its card.
+   - Use the **Move to Module** dropdown to attach the task to a module.
+   - Use the **Move to Story** dropdown to attach the task to a user story (its module is set automatically).
+   - If the task’s sprint conflicts (e.g., module-scoped sprint from a different module), sprint is cleared to preserve consistency.
+   - Only Admin, Manager, or Team Lead can change a task’s level.
+   - Reference: [projects page](file:///c:/Users/HP/Documents/trae_projects/ProspectbdTeamWork/src/app/projects/%5Bid%5D/page.tsx#L873-L902)
 
 ---
 
 ## 5. Time Tracking
+Time tracking is available on the project page header and supports real-time timers with pause/resume history and reporting.
 
-### 5.1 Logging Time
-1. Click **Time Logs** in the sidebar.
-2. In the "Log Time" form:
-   - **Project**: Select the project you worked on.
-   - **Hours**: Enter the duration (e.g., 2.5).
-   - **Description**: Briefly describe the work done (e.g., "Fixed login bug").
-3. Click **Submit Time Log**.
+### 5.1 Real-Time Timer
+- **Start**: Select a project and click **Start**. The timer hides but continues running in the background. The **Finish** button appears.
+- **Pause**: Pauses the timer and shows the timer view with the current elapsed time preserved (never resets).
+- **Resume**: Resumes the timer and hides the timer view again.
+- **Finish**: Stops the timer and records final duration with pause segments. A short confirmation is required.
+- **Notes**: Optional description field saved with the time entry at start.
+- **Idle Prompt**: If no user activity is detected for 10 minutes while running, an inline prompt offers to pause.
+- **Validation**:
+  - Requires project selection before **Start**.
+  - Prevents overlapping timers (one active per user).
+  - Minimum 1-minute entries are required for summary reporting.
+- Reference: [TimeTracker](file:///c:/Users/HP/Documents/trae_projects/ProspectbdTeamWork/src/components/TimeTracker.tsx)
 
-### 5.2 Viewing History
-- Your recent logs are displayed below the form in the **Recent Logs** section, showing the date, project, and hours logged.
+### 5.2 Time Entries Data
+- Each time entry contains:
+  - Start timestamp, end timestamp, total duration (seconds)
+  - Project association and notes
+  - Pause segments with start/end timestamps
+  - Status: Running/Paused/Stopped
+  - Audit log entries for start/pause/resume/finish
+- References:
+  - Schema: [schema.ts](file:///c:/Users/HP/Documents/trae_projects/ProspectbdTeamWork/src/types/schema.ts#L61-L76)
+  - Store: [store.ts](file:///c:/Users/HP/Documents/trae_projects/ProspectbdTeamWork/src/lib/store.ts#L212-L335)
+
+### 5.3 Reports
+- Navigate to **Project → Analytics** to view time reports.
+- Switch ranges: Today, This Week, This Month.
+- Metrics include total hours, entry count, projects tracked, and daily availability usage.
+- Export options:
+  - **CSV**: Exports the table rows with projects and durations.
+  - **PDF**: Use the browser print dialog (Print to PDF).
+- Reference: [TimeReports](file:///c:/Users/HP/Documents/trae_projects/ProspectbdTeamWork/src/components/TimeReports.tsx)
 
 ---
 
@@ -108,3 +138,34 @@ Once connected, you will see three tabs:
 
 ## 9. Support
 For technical issues or feature requests, please contact the System Administrator or log a ticket in the "Support" project board.
+
+---
+
+## 10. Sprints & Hierarchy
+
+### 10.1 Sprint Attachment & Containment
+- Sprints have explicit **scope**: Project or Module.
+- **Project-level sprint**: scope=Project, moduleId=null, no parent sprint.
+- **Module-level sprint**: scope=Module, moduleId set, must reference a parent project sprint. Dates must be fully contained within the parent sprint.
+- References:
+  - Model: [schema.ts: Sprint](file:///c:/Users/HP/Documents/trae_projects/ProspectbdTeamWork/src/types/schema.ts#L128-L137)
+  - Creation/Update validation: [store.ts](file:///c:/Users/HP/Documents/trae_projects/ProspectbdTeamWork/src/lib/store.ts#L328-L334), [serverStore.ts](file:///c:/Users/HP/Documents/trae_projects/ProspectbdTeamWork/src/lib/serverStore.ts#L123-L175)
+
+### 10.2 Task Level Rules
+- Tasks can be created at **Project**, **Module**, or **User Story** levels.
+- Without sprint selection, tasks created from the project board default to **Project** level.
+- Selecting a sprint attaches tasks to the sprint’s level (Project or Module).
+- Moving tasks:
+  - Project → Module via **Move to Module**
+  - Module → User Story via **Move to Story**
+  - Sprint consistency enforced; invalid sprint associations are cleared.
+- Role restriction: Only **Admin/Manager/TeamLead** can change levels.
+- Reference: [projects page](file:///c:/Users/HP/Documents/trae_projects/ProspectbdTeamWork/src/app/projects/%5Bid%5D/page.tsx#L873-L902)
+
+### 10.3 Board Filtering
+- Module filter on the project board shows:
+  - Tasks directly assigned to the module
+  - Tasks under the module’s user stories
+  - Tasks in sprints attached to the module
+- Sprint filter shows tasks linked by sprint directly or via user story inheritance.
+- Reference: [project board filters](file:///c:/Users/HP/Documents/trae_projects/ProspectbdTeamWork/src/app/projects/%5Bid%5D/page.tsx#L87-L109)

@@ -115,7 +115,7 @@ export function TimeTracker() {
     if (!canControl || !userId) return;
     if (!selectedProjectId) return;
     startTimer(userId, selectedProjectId, notes);
-    setTimerVisible(false);
+    setTimerVisible(true);
   };
   const pause = () => {
     if (!canControl || !userId) return;
@@ -125,7 +125,7 @@ export function TimeTracker() {
   const resume = () => {
     if (!canControl || !userId) return;
     resumeTimer(userId);
-    setTimerVisible(false);
+    setTimerVisible(true);
   };
   const stop = () => {
     if (!canControl || !userId) return;
