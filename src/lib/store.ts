@@ -295,7 +295,7 @@ export const useAppStore = create<AppState>((set) => ({
       const now = new Date().toISOString();
       const entries = state.timeEntries.map((e) => {
         if (e.id !== id || e.status !== 'Running') return e;
-        return { ...e, status: 'Paused', pauses: [...e.pauses, { start: now }], updates: [...e.updates, now] };
+        return { ...e, status: 'Paused' as TimeEntryStatus, pauses: [...e.pauses, { start: now }], updates: [...e.updates, now] };
       });
       const audit: AuditLog = {
         id: `audit-${Date.now()}`,
@@ -319,7 +319,7 @@ export const useAppStore = create<AppState>((set) => ({
         if (pauses.length > 0 && !pauses[pauses.length - 1].end) {
           pauses[pauses.length - 1] = { ...pauses[pauses.length - 1], end: now };
         }
-        return { ...e, status: 'Running', pauses, updates: [...e.updates, now] };
+        return { ...e, status: 'Running' as TimeEntryStatus, pauses, updates: [...e.updates, now] };
       });
       const audit: AuditLog = {
         id: `audit-${Date.now()}`,
@@ -351,7 +351,7 @@ export const useAppStore = create<AppState>((set) => ({
           return acc + Math.max(0, pe - ps);
         }, 0);
         const totalSeconds = Math.max(0, Math.floor((endMs - startMs - pauseMs) / 1000));
-        return { ...e, status: 'Stopped', endTs: now, pauses, totalSeconds, updates: [...e.updates, now] };
+        return { ...e, status: 'Stopped' as TimeEntryStatus, endTs: now, pauses, totalSeconds, updates: [...e.updates, now] };
       });
       const entry = entries.find((e) => e.id === id)!;
       const minValid = entry.totalSeconds >= 60;

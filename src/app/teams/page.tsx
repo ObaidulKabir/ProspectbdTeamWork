@@ -33,10 +33,11 @@ export default function TeamsPage() {
       id: `team-${Date.now()}`,
       name: newTeamName.trim(),
       description: newTeamDescription.trim(),
-      createdAt: dayjs().toISOString(),
+      createdAt: new Date().toISOString(),
       status: "Active",
       leadId: null,
       members: [],
+      subTeams: [],
     };
 
     addTeam(newTeam);

@@ -112,7 +112,7 @@ export interface Project {
   managerId: string;
   teamLeadId: string;
   teamMemberIds: string[];
-  status: 'Planning' | 'Design' | 'Implementation' | 'Testing' | 'Deployment';
+  status: 'Planning' | 'Design' | 'Implementation' | 'Testing' | 'Deployment' | 'Completed';
   startDate: string;
   endDate?: string;
   gitRepositoryUrl?: string | null;
